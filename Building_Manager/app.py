@@ -50,6 +50,45 @@ def edit_unit():
     return jsonify({'response':result})
 
 
+
+
+
+
+
+
+
+
+
+
+
+#manager-------------------------------------
+@app.route('/manager/add' , methods=['POST'])
+def add_manager():
+    cmd = 'INSERT INTO `manager` (`passwd` , `phone`) VALUES (\'%s\' , \'%s\')'%(request.form['passwd'] , request.form['phone'])
+    result = manipulate_database(cmd)
+    return jsonify({'response':result})
+
+
+@app.route('/manager/remove' , methods=['POST'])
+def remove_manager():
+    cmd = 'DELETE FROM `manager` WHERE id=%i'%int(request.form['manager_id'])
+    result = manipulate_database(cmd)
+    return jsonify({'response':result})
+
+
+@app.route('/manager/edit' , methods=['POST'])
+def edit_manager():
+    cmd = 'UPDATE `manager` SET `passwd`=\'%s\' , `phone`=\'%s\' WHERE `id`=%i'%(request.form['passwd'] , request.form['phone'] , int(request.form['manager_id']))
+    result = manipulate_database(cmd)
+    return jsonify({'response':result})
+
+
+
+
+
+
+
+
 #insert|delete|edit|db---------------------------
 def manipulate_database(query):
     db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
