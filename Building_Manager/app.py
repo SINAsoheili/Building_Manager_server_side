@@ -155,6 +155,23 @@ def edit_repair():
 
 
 
+#receipt-------------------------------------
+@app.route('/receipt/add' , methods=['POST'])
+def add_receipt():
+    receipt_type= int(request.form['type'])  # water=1   power=2   gas=0
+    pay_date    = request.form['pay_date']
+    issue_date  = request.form['issue_date']
+    amount      = float(request.form['amount'])
+    id_receipt  = request.form['id_receipt']
+    id_payment  = request.form['id_payment']
+    building_id = int(request.form['building_id'])
+
+    cmd = 'INSERT INTO `receipt` (`type` , `pay_date` , `issue_date` , `amount` , `id_receipt` , `id_payment` , `building_id`) VALUES (%i , \'%s\' , \'%s\' , %f , \'%s\' , \'%s\' , %i)'%(receipt_type , pay_date, issue_date , amount , id_receipt , id_payment , building_id)
+    result = manipulate_database(cmd)
+    return jsonify({'response':result})
+
+
+
 #insert|delete|edit|db---------------------------
 def manipulate_database(query):
     db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
