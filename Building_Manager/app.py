@@ -129,6 +129,34 @@ def edit_charge():
 
 
 
+#repair-------------------------------------
+@app.route('/repair/add' , methods=['POST'])
+def add_repair():
+    date        = request.form['date']
+    comment     = request.form['comment']
+    title       = request.form['title']
+    amount      = float(request.form['amount'])
+    building_id = int(request.form['building_id'])
+
+    cmd = 'INSERT INTO `repair` (`date` , `comment` , `title` , `amount` , `building_id`)VALUES (\'%s\' , \'%s\' , \'%s\' , %f , %i)'%(date , comment , title , amount , building_id)
+    result = manipulate_database(cmd)
+    return jsonify({'response':result})
+
+
+@app.route('/repair/edit' , methods=['POST'])
+def edit_repair():
+    date        = request.form['date']
+    comment     = request.form['comment']
+    title       = request.form['title']
+    amount      = float(request.form['amount'])
+    id = int(request.form['repair_id'])
+
+    cmd = 'UPDATE `repair` SET `date`=\'%s\' , `comment`=\'%s\' , `title`=\'%s\' , `amount`=%f WHERE `id`=%i'%(date , comment, title , amount , id)
+    result = manipulate_database(cmd)
+    return jsonify({'response':result})
+
+
+    
 #insert|delete|edit|db---------------------------
 def manipulate_database(query):
     db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
