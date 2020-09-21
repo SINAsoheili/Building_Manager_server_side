@@ -51,16 +51,6 @@ def edit_unit():
 
 
 
-
-
-
-
-
-
-
-
-
-
 #manager-------------------------------------
 @app.route('/manager/add' , methods=['POST'])
 def add_manager():
@@ -84,8 +74,26 @@ def edit_manager():
 
 
 
+#notification-------------------------------------
+@app.route('/notification/add' , methods=['POST'])
+def add_notification():
+    cmd = 'INSERT INTO `notification` (`text` , `title` , `date` , `building_id`) VALUES (\'%s\' , \'%s\' , \'%s\' , %i)'%(request.form['text'] , request.form['title'] , request.form['date'] , int(request.form['building_id']))
+    result = manipulate_database(cmd)
+    return jsonify({'response':result})
 
 
+@app.route('/notification/remove' , methods=['POST'])
+def remove_notification():
+    cmd = 'DELETE FROM `notification` WHERE `id`=%i'%int(request.form['notification_id'])
+    result = manipulate_database(cmd)
+    return jsonify({'response':result})
+
+
+@app.route('/notification/edit' , methods=['POST'])
+def edit_notification():
+    cmd = 'UPDATE `notification` SET `text`=\'%s\' , `title`=\'%s\' , `date`=\'%s\' WHERE id=%i'%(request.form['text'] , request.form['title'] , request.form['date'] , int(request.form['notification_id']))
+    result = manipulate_database(cmd)
+    return jsonify({'response':result})
 
 
 
