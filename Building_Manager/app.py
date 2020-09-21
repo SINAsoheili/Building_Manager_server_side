@@ -8,21 +8,36 @@ app = Flask(__name__)
 #building-------------------------------------
 @app.route('/building/add' , methods=['POST'])
 def add_building():
-    cmd = 'INSERT INTO `building` (`name` , `cash` , `address` , `unit_count` , `manager_id`) VALUES ( \'%s\' , %i , \'%s\' , %i , %i)'%(request.form['name'] , float(request.form['cash']) , request.form['address'], int(request.form['unit_count']) , int(request.form['manager_id']))
+    name        = request.form['name'] 
+    cash        = float(request.form['cash']) 
+    address     = request.form['address']
+    unit_count  = int(request.form['unit_count']) 
+    manager_id  = int(request.form['manager_id'])
+
+    cmd = 'INSERT INTO `building` (`name` , `cash` , `address` , `unit_count` , `manager_id`) VALUES ( \'%s\' , %i , \'%s\' , %i , %i)'%(name , cash , address , unit_count , manager_id)
     result = manipulate_database(cmd)
     return jsonify({'response':result})
 
 
 @app.route('/building/remove' , methods=['POST'])
 def remove_building():
-    cmd = 'DELETE FROM `building` WHERE id=%i'%int(request.form['building_id'])
+    building_id = int(request.form['building_id'])
+
+    cmd = 'DELETE FROM `building` WHERE id=%i'%building_id
     result = manipulate_database(cmd)
     return jsonify({'response':result})
 
 
 @app.route('/building/edit' , methods=['POST'])
 def edit_building():
-    cmd = 'UPDATE `building` SET `name`=\'%s\' , `cash`=%f , `address`=\'%s\' , `unit_count`=%i WHERE  `manager_id`=%i AND `id`=%i'%(request.form['building_name'] , float(request.form['cash']) , request.form['address'] , int(request.form['unit_count']) , int(request.form['manager_id']) , int(request.form['building_id']))
+    building_name = request.form['building_name'] 
+    cash        = float(request.form['cash']) 
+    address     = request.form['address'] 
+    unit_count  = int(request.form['unit_count']) 
+    manager_id  = int(request.form['manager_id']) 
+    buildign_id = int(request.form['building_id'])
+
+    cmd = 'UPDATE `building` SET `name`=\'%s\' , `cash`=%f , `address`=\'%s\' , `unit_count`=%i WHERE  `manager_id`=%i AND `id`=%i'%(building_name  , cash , address , unit_count , manager_id , buildign_id)
     result = manipulate_database(cmd)
     return jsonify({'response':result})
 
@@ -31,21 +46,37 @@ def edit_building():
 #unit-------------------------------------
 @app.route('/unit/add' , methods=['POST'])
 def add_unit():
-    cmd = 'INSERT INTO `unit` (`owner_name` , `phone` ,`unit_number` , `tag` , `building_id`) VALUES (\'%s\' , \'%s\' , %i , %i , %i)'%(request.form['owner_name']  , request.form['phone'] , int(request.form['unit_number']) , int(request.form['tag']) , int(request.form['building_id']))
+    owner_name  = request.form['owner_name'] 
+    phone       = request.form['phone'] 
+    unit_number = int(request.form['unit_number']) 
+    tag         = int(request.form['tag']) 
+    building_id = int(request.form['building_id'])
+
+    cmd = 'INSERT INTO `unit` (`owner_name` , `phone` ,`unit_number` , `tag` , `building_id`) VALUES (\'%s\' , \'%s\' , %i , %i , %i)'%(owner_name , phone , unit_number , tag , building_id)
     result = manipulate_database(cmd)
     return jsonify({'response':result})
 
 
 @app.route('/unit/remove' , methods=['POST'])
 def remove_unit():
-    cmd = 'DELETE FROM `unit` WHERE `building_id`=%i AND `unit_number`=%i'%(int(request.form['building_id']) , int(request.form['unit_number']))
+    building_id = int(request.form['building_id'])
+    unit_number = int(request.form['unit_number'])
+
+    cmd = 'DELETE FROM `unit` WHERE `building_id`=%i AND `unit_number`=%i'%(building_id , unit_number)
     result = manipulate_database(cmd)
     return jsonify({'response':result})
 
 
 @app.route('/unit/edit' , methods=['POST'])
 def edit_unit():
-    cmd = 'UPDATE `unit` SET `owner_name`=\'%s\' , `phone`=\'%s\' ,`unit_number`=%i , `tag`=%i WHERE `building_id`=%i AND unit_number=%i'%(request.form['owner_name'] , request.form['phone'] , int(request.form['unit_number']) ,  int(request.form['tag']) , int(request.form['building_id']) , int(request.form['prev_unit_number']))
+    owner_name = request.form['owner_name']
+    phone = request.form['phone']
+    unit_number = int(request.form['unit_number'])
+    tag = int(request.form['tag'])
+    building_id = int(request.form['building_id'])
+    prev_unit_number = int(request.form['prev_unit_number'])
+
+    cmd = 'UPDATE `unit` SET `owner_name`=\'%s\' , `phone`=\'%s\' ,`unit_number`=%i , `tag`=%i WHERE `building_id`=%i AND unit_number=%i'%(owner_name , phone , unit_number , tag , building_id , prev_unit_number)
     result = manipulate_database(cmd)
     return jsonify({'response':result})
 
@@ -54,21 +85,30 @@ def edit_unit():
 #manager-------------------------------------
 @app.route('/manager/add' , methods=['POST'])
 def add_manager():
-    cmd = 'INSERT INTO `manager` (`passwd` , `phone`) VALUES (\'%s\' , \'%s\')'%(request.form['passwd'] , request.form['phone'])
+    passwd = request.form['passwd']
+    phone = request.form['phone']
+
+    cmd = 'INSERT INTO `manager` (`passwd` , `phone`) VALUES (\'%s\' , \'%s\')'%(passwd , phone)
     result = manipulate_database(cmd)
     return jsonify({'response':result})
 
 
 @app.route('/manager/remove' , methods=['POST'])
 def remove_manager():
-    cmd = 'DELETE FROM `manager` WHERE id=%i'%int(request.form['manager_id'])
+    manager_id = int(request.form['manager_id'])
+
+    cmd = 'DELETE FROM `manager` WHERE id=%i'%manager_id
     result = manipulate_database(cmd)
     return jsonify({'response':result})
 
 
 @app.route('/manager/edit' , methods=['POST'])
 def edit_manager():
-    cmd = 'UPDATE `manager` SET `passwd`=\'%s\' , `phone`=\'%s\' WHERE `id`=%i'%(request.form['passwd'] , request.form['phone'] , int(request.form['manager_id']))
+    passwd = request.form['passwd']
+    phone = request.form['phone']
+    manager_id = int(request.form['manager_id'])
+
+    cmd = 'UPDATE `manager` SET `passwd`=\'%s\' , `phone`=\'%s\' WHERE `id`=%i'%(passwd , phone , manager_id)
     result = manipulate_database(cmd)
     return jsonify({'response':result})
 
@@ -77,21 +117,33 @@ def edit_manager():
 #notification-------------------------------------
 @app.route('/notification/add' , methods=['POST'])
 def add_notification():
-    cmd = 'INSERT INTO `notification` (`text` , `title` , `date` , `building_id`) VALUES (\'%s\' , \'%s\' , \'%s\' , %i)'%(request.form['text'] , request.form['title'] , request.form['date'] , int(request.form['building_id']))
+    text = request.form['text']
+    title = request.form['title']
+    date = request.form['date']
+    building_id = int(request.form['building_id'])
+
+    cmd = 'INSERT INTO `notification` (`text` , `title` , `date` , `building_id`) VALUES (\'%s\' , \'%s\' , \'%s\' , %i)'%(text , title , date , building_id)
     result = manipulate_database(cmd)
     return jsonify({'response':result})
 
 
 @app.route('/notification/remove' , methods=['POST'])
 def remove_notification():
-    cmd = 'DELETE FROM `notification` WHERE `id`=%i'%int(request.form['notification_id'])
+    notification_id = int(request.form['notification_id'])
+
+    cmd = 'DELETE FROM `notification` WHERE `id`=%i'%notification_id
     result = manipulate_database(cmd)
     return jsonify({'response':result})
 
 
 @app.route('/notification/edit' , methods=['POST'])
 def edit_notification():
-    cmd = 'UPDATE `notification` SET `text`=\'%s\' , `title`=\'%s\' , `date`=\'%s\' WHERE id=%i'%(request.form['text'] , request.form['title'] , request.form['date'] , int(request.form['notification_id']))
+    text = request.form['text']
+    title = request.form['title']
+    date = request.form['date']
+    notification_id = int(request.form['notification_id'])
+
+    cmd = 'UPDATE `notification` SET `text`=\'%s\' , `title`=\'%s\' , `date`=\'%s\' WHERE id=%i'%(text , title , date , notification_id)
     result = manipulate_database(cmd)
     return jsonify({'response':result})
 
