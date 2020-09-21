@@ -97,6 +97,38 @@ def edit_notification():
 
 
 
+#charge-------------------------------------
+@app.route('/charge/add' , methods=['POST'])
+def add_charge():
+    amount      = float(request.form['amount'])
+    status      = int(request.form['status'])
+    issue_date  = request.form['issue_date']
+    pay_date    = request.form['pay_date']
+    manager_id  = int(request.form['manager_id'])
+    building_id = int(request.form['building_id'])
+    unit_number = int(request.form['unit_number'])
+
+    cmd = 'INSERT INTO `charge` (`amount` ,`status` , `issue_date` , `pay_date` , `manager_id` , `building_id` , `unit_number`) VALUES (%f , %i , \'%s\' , \'%s\' , %i ,%i , %i)'%(amount ,status , issue_date  , pay_date , manager_id , building_id , unit_number)
+    result = manipulate_database(cmd)
+    return jsonify({'response':result})
+
+
+@app.route('/charge/edit' , methods=['POST'])
+def edit_charge():
+    amount      = float(request.form['amount'])
+    status      = int(request.form['status'])
+    issue_date  = request.form['issue_date']
+    pay_date    = request.form['pay_date']
+    manager_id  = int(request.form['manager_id'])
+    building_id = int(request.form['building_id'])
+    unit_number = int(request.form['unit_number'])
+
+    cmd = 'UPDATE `charge` SET `amount`=%f ,`status`=%i , `issue_date`=\'%s\' , `pay_date`=\'%s\' WHERE `manager_id`=%i AND `building_id`=%i AND `unit_number`=%i'%(amount ,status , issue_date  , pay_date , manager_id , building_id , unit_number)
+    result = manipulate_database(cmd)
+    return jsonify({'response':result})
+
+
+
 #insert|delete|edit|db---------------------------
 def manipulate_database(query):
     db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
