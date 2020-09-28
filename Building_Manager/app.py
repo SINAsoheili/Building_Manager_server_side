@@ -84,6 +84,36 @@ def building_register():
             return respose
 
 
+@app.route("/building/list" , methods=["get"])
+def building_list():
+    manager_id = int(request.args.get("manager_id"))
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+
+    cursor = db.cursor()
+    cmd = "SELECT * FROM `building` WHERE manager_id=%i"%manager_id
+    cursor.execute(cmd)
+    result = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    list_response = []
+    for obj in result:
+        id , name , cash , address , unit_count , manager_id = obj
+        response = {
+            "id": id , 
+            "name": name ,
+            "cash": cash , 
+            "address": address , 
+            "unit_count": unit_count , 
+            "manager_id": manager_id
+        }
+
+        list_response.append(response)
+
+    return jsonify(list_response)
 
 #run app----------------------------------------
 if __name__ == "__main__":
