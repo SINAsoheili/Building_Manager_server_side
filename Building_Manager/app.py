@@ -26,8 +26,11 @@ def manager_register():
         cursor.execute(cmd)
 
         result = cursor.fetchall()
+        cursor.close()
+        db.close()
         if len(result) == 0 :
             result = {"status":True , "manager_id":-1} 
+            cursor.close()
             return result   
         else:
             row = result[0]
@@ -35,8 +38,11 @@ def manager_register():
             result = {"status":True , "manager_id":id} 
             return result
     else :
+        cursor.close()
+        db.close()
         result = {"status":False , "manager_id":-1}
         return result
+
 
 
 #Building---------------------------------------
@@ -76,7 +82,6 @@ def building_register():
             id = row[0]
             respose = {"status":True , "id":id}
             return respose
-
 
 
 
