@@ -137,10 +137,12 @@ def unit_register():
 
     if cursor.rowcount == 0:
         response = {"status":False}
-        return jsonify(response) 
     else :
         response = {"status":True}
-        return jsonify(response)
+
+    cursor.close()
+    db.close()    
+    return jsonify(response)
 
 
 @app.route("/unit/list" , methods=["get"])
