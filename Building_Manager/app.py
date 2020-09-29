@@ -115,6 +115,32 @@ def building_list():
 
     return jsonify(list_response)
 
+#Unit-------------------------------------------
+@app.route("/unit/add" , methods=['GET'])
+def unit_register():
+    owner_name  = request.args.get("owner_name")
+    phone       = request.args.get("phone")
+    unit_number = request.args.get("unit_number")
+    tag         = request.args.get("tag")
+    building_id = request.args.get("building_id")
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+
+    cursor = db.cursor()
+    cmd = "INSERT INTO `unit` (owner_name , phone , unit_number , tag , building_id) VALUES ('%s' , '%s' , %i , %i , %i)"%(owner_name , phone , int(unit_number) , int(tag) , int(building_id))
+    cursor.execute(cmd)
+    db.commit()
+
+    if cursor.rowcount == 0:
+        response = {"status":False}
+        return jsonify(response) 
+    else :
+        response = {"status":True}
+        return jsonify(response)
+
+
 #run app----------------------------------------
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=5000 , debug=True)
