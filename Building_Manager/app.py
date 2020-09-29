@@ -115,6 +115,8 @@ def building_list():
 
     return jsonify(list_response)
 
+
+
 #Unit-------------------------------------------
 @app.route("/unit/add" , methods=['GET'])
 def unit_register():
@@ -139,6 +141,38 @@ def unit_register():
     else :
         response = {"status":True}
         return jsonify(response)
+
+
+@app.route("/unit/list" , methods=["get"])
+def unit_list():
+    building_id = int(request.args.get("building_id"))
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+
+    cursor = db.cursor()
+    cmd = "SELECT * FROM `unit` WHERE building_id=%i"%building_id
+    cursor.execute(cmd)
+    result = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    list_response = []
+    for obj in result:
+        owner_name , phone , unit_number , tag , building_id = obj
+        response = {
+            "owner_name":owner_name , 
+            "phone":phone ,
+            "unit_number":unit_number , 
+            "tag":tag , 
+            "building_id":building_id
+        }
+
+        list_response.append(response)
+
+    return jsonify(list_response)
+
 
 
 #run app----------------------------------------
