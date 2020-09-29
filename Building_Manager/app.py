@@ -203,6 +203,30 @@ def unit_info():
     return jsonify(response)
 
 
+@app.route("/unit/delete" , methods=["get"])
+def unit_delete():
+    building_id = int(request.args.get("building_id"))
+    unit_number = int(request.args.get("unit_number"))
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+
+    cursor = db.cursor()
+    cmd = "DELETE FROM `charge` WHERE building_id=%i AND unit_number=%i"%(building_id , unit_number)
+    cursor.execute(cmd)
+    cmd = "DELETE FROM `unit` WHERE building_id=%i AND unit_number=%i"%(building_id , unit_number)
+    cursor.execute(cmd)
+    db.commit()
+    
+    if cursor.rowcount == 0 :
+        response = {"status":False}
+    else :
+        response = {"status":True}
+
+    return jsonify(response)
+
+
 
 #run app----------------------------------------
 if __name__ == "__main__":
