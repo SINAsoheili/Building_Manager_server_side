@@ -176,6 +176,33 @@ def unit_list():
     return jsonify(list_response)
 
 
+@app.route("/unit/info" , methods=["get"])
+def unit_info():
+    building_id = int(request.args.get("building_id"))
+    unit_number = int(request.args.get("unit_number"))
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+
+    cursor = db.cursor()
+    cmd = "SELECT * FROM `unit` WHERE building_id=%i AND unit_number=%i"%(building_id , unit_number)
+    cursor.execute(cmd)
+    result = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    owner_name , phone , unit_number , tag , building_id = result[0]
+    response = {
+        "owner_name":owner_name , 
+        "phone":phone ,
+        "unit_number":unit_number , 
+        "tag":tag , 
+        "building_id":building_id
+    }
+    return jsonify(response)
+
+
 
 #run app----------------------------------------
 if __name__ == "__main__":
