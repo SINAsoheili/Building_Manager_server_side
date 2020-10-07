@@ -202,6 +202,32 @@ def notification_add():
     return result     
 
 #repair-----------------------------------------
+@app.route("/repair/add" , methods=["GET"])
+def repair_add():
+    date = request.args.get("date")
+    comment = request.args.get("comment")
+    title = request.args.get("title")
+    amount = float(request.args.get("amount"))
+    building_id = int(request.args.get("buildingId"))
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+    
+    cursor = db.cursor()
+    cmd = "INSERT INTO `repair` (date , comment , title , amount , building_id) VALUES ('%s' , '%s' , '%s' , %f , %i)"%(date , comment , title , amount , building_id)
+    cursor.execute(cmd)
+    db.commit()
+
+    if cursor.rowcount == 0 :
+        result = {"result":False}
+    else:
+        result = {"result":True}
+
+    cursor.close()
+    db.close()
+    return result    
+
 #receipt----------------------------------------
 
 #run app----------------------------------------
