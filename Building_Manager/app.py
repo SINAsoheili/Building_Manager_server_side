@@ -229,6 +229,35 @@ def repair_add():
     return result    
 
 #receipt----------------------------------------
+@app.route("/receipt/add" , methods=["GET"])
+def receipt_add():
+    receipt_type = int(request.args.get("receipt_type"))
+    pay_date = request.args.get("pay_date")
+    issue_date = request.args.get("issue_date")
+    amount = float(request.args.get("amount"))
+    id_receipt = request.args.get("id_receipt")
+    id_payment = request.args.get("id_payment")
+    building_id = int(request.args.get("building_id"))
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+    
+    cursor = db.cursor()
+    cmd = "INSERT INTO `receipt` (type , pay_date , issue_date , amount , id_receipt , id_payment , building_id) VALUES (%i , '%s' , '%s'  , %f , '%s' , '%s' , %i)"%(receipt_type , pay_date , issue_date , amount , id_receipt , id_payment , building_id)
+    cursor.execute(cmd)
+    db.commit()
+
+    if cursor.rowcount == 0 :
+        result = {"result":False}
+    else:
+        result = {"result":True}
+
+    cursor.close()
+    db.close()
+    return result    
+
+
 
 #run app----------------------------------------
 if __name__ == "__main__":
