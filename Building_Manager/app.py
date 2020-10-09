@@ -175,9 +175,6 @@ def unit_list():
 
     return jsonify(list_response)
 
-
-
-
 @app.route("/unit/del" , methods=['GET'])
 def unit_delete():
     phone       = request.args.get("phone")
@@ -201,9 +198,6 @@ def unit_delete():
     cursor.close()
     db.close()    
     return jsonify(response)
-
-
-
 
 #notification ----------------------------------
 @app.route("/notification/add" , methods=['GET'])
@@ -377,6 +371,59 @@ def receipt_list():
         result.append(item)
     
     return jsonify(result)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#charge----------------------------------------
+@app.route("/charge/add" , methods=["GET"])
+def charge_add():
+    amount = float(request.args.get("amount"))
+    status = int(request.args.get("status"))
+    issue_date = request.args.get("issue_date")
+    pay_date = request.args.get("pay_date")
+    manager_id = int(request.args.get("manager_id"))
+    building_id = int(request.args.get("building_id"))
+    unit_number = int(request.args.get("unit_number"))
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+    
+    cursor = db.cursor()
+    cmd = "INSERT INTO `charge` (amount , status , issue_date , pay_date , manager_id , building_id , unit_number) VALUES (%f , %i , '%s' , '%s' , %i , %i , %i)"%(amount , status , issue_date , pay_date , manager_id , building_id , unit_number)
+    cursor.execute(cmd)
+    db.commit()
+
+    if cursor.rowcount == 0 :
+        result = {"result":False}
+    else:
+        result = {"result":True}
+
+    cursor.close()
+    db.close()
+    return result  
+
+
+
+
+
+
+
+
+
+
+
 
 #run app----------------------------------------
 if __name__ == "__main__":
