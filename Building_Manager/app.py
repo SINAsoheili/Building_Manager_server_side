@@ -257,13 +257,6 @@ def repair_add():
     db.close()
     return result    
 
-
-
-
-
-
-
-
 @app.route("/repair/list" , methods=["GET"])
 def repair_list():
     buildingId = int(request.args.get("buildingId"))
@@ -294,20 +287,6 @@ def repair_list():
     
     return jsonify(result)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #receipt----------------------------------------
 @app.route("/receipt/add" , methods=["GET"])
 def receipt_add():
@@ -336,6 +315,53 @@ def receipt_add():
     cursor.close()
     db.close()
     return result    
+
+
+
+
+
+
+
+
+
+
+
+@app.route("/receipt/list" , methods=["GET"])
+def receipt_list():
+    buildingId = int(request.args.get("buildingId"))
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+
+    cursor = db.cursor()
+    cmd = "SELECT * FROM `receipt` where building_id=%i"%buildingId
+    cursor.execute(cmd)
+    itmes = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    result = []
+    for obj in itmes:
+        id , receiptType , payDate , issueDate , amount , idReceipt , idPayment , building_id = obj
+        item = {
+            "id":id , 
+            "type":receiptType ,
+            "pay_date":payDate ,
+            "issue_date":issueDate , 
+            "amount":amount ,
+            "id_receipt":idReceipt , 
+            "id_payment":idPayment , 
+            "building_id":building_id
+        }
+        result.append(item)
+    
+    return jsonify(result)
+
+
+
+
+
 
 
 
