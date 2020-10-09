@@ -257,6 +257,57 @@ def repair_add():
     db.close()
     return result    
 
+
+
+
+
+
+
+
+@app.route("/repair/list" , methods=["GET"])
+def repair_list():
+    buildingId = int(request.args.get("buildingId"))
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+
+    cursor = db.cursor()
+    cmd = "SELECT * FROM `repair` where building_id=%i"%buildingId
+    cursor.execute(cmd)
+    itmes = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    result = []
+    for obj in itmes:
+        id , date , comment , title , amount , building_id = obj
+        item = {
+            "id":id , 
+            "date":date , 
+            "comment":comment , 
+            "title":title ,
+            "amount":amount , 
+            "building_id":building_id , 
+        }
+        result.append(item)
+    
+    return jsonify(result)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #receipt----------------------------------------
 @app.route("/receipt/add" , methods=["GET"])
 def receipt_add():
