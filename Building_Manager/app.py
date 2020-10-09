@@ -395,6 +395,43 @@ def receipt_list():
     return jsonify(result)
 
 
+
+
+
+
+
+
+@app.route("/receipt/del" , methods=["GET"])
+def receipt_del():
+    id = int(request.args.get("id"))
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+    
+    cursor = db.cursor()
+    cmd = "DELETE FROM receipt WHERE id=%i"%id
+    cursor.execute(cmd)
+    db.commit()
+
+    if cursor.rowcount == 0 :
+        result = {"result":False}
+    else:
+        result = {"result":True}
+
+    cursor.close()
+    db.close()
+    return result 
+
+
+
+
+
+
+
+
+
+
 #charge----------------------------------------
 @app.route("/charge/add" , methods=["GET"])
 def charge_add():
