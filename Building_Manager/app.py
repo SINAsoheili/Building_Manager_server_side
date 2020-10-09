@@ -311,6 +311,28 @@ def repair_list():
     
     return jsonify(result)
 
+@app.route("/repair/del" , methods=["GET"])
+def repair_del():
+    id = int(request.args.get("id"))
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+    
+    cursor = db.cursor()
+    cmd = "DELETE FROM repair WHERE id=%i"%id
+    cursor.execute(cmd)
+    db.commit()
+
+    if cursor.rowcount == 0 :
+        result = {"result":False}
+    else:
+        result = {"result":True}
+
+    cursor.close()
+    db.close()
+    return result    
+
 #receipt----------------------------------------
 @app.route("/receipt/add" , methods=["GET"])
 def receipt_add():
