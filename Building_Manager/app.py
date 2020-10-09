@@ -175,6 +175,36 @@ def unit_list():
 
     return jsonify(list_response)
 
+
+
+
+@app.route("/unit/del" , methods=['GET'])
+def unit_delete():
+    phone       = request.args.get("phone")
+    unit_number = int(request.args.get("unit_number"))
+    building_id = int(request.args.get("building_id"))
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+
+    cursor = db.cursor()
+    cmd = "DELETE FROM `unit` WHERE phone=%s AND unit_number=%i AND building_id=%i"%(phone , unit_number , building_id)
+    cursor.execute(cmd)
+    db.commit()
+
+    if cursor.rowcount == 0:
+        response = {"status":False}
+    else :
+        response = {"status":True}
+
+    cursor.close()
+    db.close()    
+    return jsonify(response)
+
+
+
+
 #notification ----------------------------------
 @app.route("/notification/add" , methods=['GET'])
 def notification_add():
@@ -316,16 +346,6 @@ def receipt_add():
     db.close()
     return result    
 
-
-
-
-
-
-
-
-
-
-
 @app.route("/receipt/list" , methods=["GET"])
 def receipt_list():
     buildingId = int(request.args.get("buildingId"))
@@ -357,13 +377,6 @@ def receipt_list():
         result.append(item)
     
     return jsonify(result)
-
-
-
-
-
-
-
 
 #run app----------------------------------------
 if __name__ == "__main__":
