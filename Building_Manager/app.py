@@ -201,6 +201,35 @@ def notification_add():
     db.close()
     return result     
 
+@app.route("/notification/list" , methods=['GET'])
+def notification_list():
+    buildingId = int(request.args.get("buildingId"))
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+
+    cursor = db.cursor()
+    cmd = "SELECT * FROM `notification` where building_id=%i"%buildingId
+    cursor.execute(cmd)
+    itmes = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    result = []
+    for obj in itmes:
+        id , text , date , title , building_id = obj
+        item = {
+            "id":id , 
+            "text":text , 
+            "date":date , 
+            "title":title ,
+            "building_id":building_id
+        }
+        result.append(item)
+    
+    return jsonify(result)
+
 #repair-----------------------------------------
 @app.route("/repair/add" , methods=["GET"])
 def repair_add():
