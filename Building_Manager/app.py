@@ -373,18 +373,6 @@ def receipt_list():
     return jsonify(result)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 #charge----------------------------------------
 @app.route("/charge/add" , methods=["GET"])
 def charge_add():
@@ -414,16 +402,39 @@ def charge_add():
     db.close()
     return result  
 
+@app.route("/charge/list" , methods=["GET"])
+def charge_list():
+    buildingId = int(request.args.get("buildingId"))
+    unitNumber = int(request.args.get("unitNumber"))
 
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
 
+    cursor = db.cursor()
+    cmd = "SELECT * FROM `charge` where building_id=%i AND unit_number=%i"%(buildingId , unitNumber)
+    cursor.execute(cmd)
+    itmes = cursor.fetchall()
+    cursor.close()
+    db.close()
 
+    result = []
+    for obj in itmes:
+        id , amount, status , issue_date , pay_date , manager_id , building_id , unit_number = obj
 
-
-
-
-
-
-
+        item = {
+            "id":id ,
+            "amount":amount ,
+            "status":status , 
+            "issue_date":issue_date , 
+            "pay_date":pay_date , 
+            "manager_id":manager_id , 
+            "building_id":building_id , 
+            "unit_number":unit_number
+        }
+        result.append(item)
+    
+    return jsonify(result)
 
 #run app----------------------------------------
 if __name__ == "__main__":
