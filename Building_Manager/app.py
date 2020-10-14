@@ -501,13 +501,6 @@ def charge_list():
     
     return jsonify(result)
 
-
-
-
-
-
-
-
 @app.route("/charge/delete" , methods=["GET"])
 def charge_delete():
     id = int(request.args.get("id"))
@@ -530,13 +523,32 @@ def charge_delete():
     db.close()
     return result  
 
+@app.route("/charge/update" , methods=["GET"])
+def charge_update():
+    id = int(request.args.get("id"))
+    amount = float(request.args.get("amount"))
+    status = int(request.args.get("status"))
+    issue_date = request.args.get("issue_date")
+    pay_date = request.args.get("pay_date")
 
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
 
+    cursor = db.cursor()
+    cmd = "UPDATE charge SET amount=%f , status=%i , issue_date='%s' , pay_date='%s' WHERE id=%i"%(amount , status , issue_date , pay_date , id)
+    cursor.execute(cmd)
+    db.commit()
+    
+    if cursor.rowcount == 0 :
+        result = {"result":False}
+    else:
+        result = {"result":True}
 
-
-
-
-
+    cursor.close()
+    db.close()
+    return result 
+    
 #run app----------------------------------------
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=5000 , debug=True)
