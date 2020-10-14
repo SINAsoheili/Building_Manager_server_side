@@ -501,6 +501,42 @@ def charge_list():
     
     return jsonify(result)
 
+
+
+
+
+
+
+
+@app.route("/charge/delete" , methods=["GET"])
+def charge_delete():
+    id = int(request.args.get("id"))
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+    
+    cursor = db.cursor()
+    cmd = "DELETE FROM charge WHERE id=%i"%id
+    cursor.execute(cmd)
+    db.commit()
+
+    if cursor.rowcount == 0 :
+        result = {"result":False}
+    else:
+        result = {"result":True}
+
+    cursor.close()
+    db.close()
+    return result  
+
+
+
+
+
+
+
+
 #run app----------------------------------------
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=5000 , debug=True)
