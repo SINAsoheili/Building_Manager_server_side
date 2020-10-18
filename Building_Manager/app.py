@@ -569,7 +569,7 @@ def user_authentication():
         owner_name , phone , unit_number , tag , building_id = all[0]
         result = {"result":True , "unitNumber":unit_number}
     else:
-        result = {"result":False , "buildingId":-1 , "unitNumber":-1}
+        result = {"result":False , "unitNumber":-1}
 
     cursor.close()
     db.close()
