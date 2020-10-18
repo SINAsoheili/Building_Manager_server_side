@@ -548,6 +548,30 @@ def charge_update():
     cursor.close()
     db.close()
     return result 
+
+#user ------------------------------------------
+@app.route("/user/authentication" , methods=["GET"])
+def user_authentication():
+    buildingId = int(request.args.get("buildingId"))
+    phone = request.args.get("phone")
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+
+    cursor = db.cursor()
+    cmd = "SELECT * FROM unit WHERE phone='%s' AND building_id=%i"%(phone , buildingId)
+    cursor.execute(cmd)
+    
+    if len(cursor.fetchall()) == 1:
+        result = {"result":True}
+    else:
+        result = {"result":False}
+
+    cursor.close()
+    db.close()
+    
+    return jsonify(result)
     
 #run app----------------------------------------
 if __name__ == "__main__":
