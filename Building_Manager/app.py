@@ -562,11 +562,14 @@ def user_authentication():
     cursor = db.cursor()
     cmd = "SELECT * FROM unit WHERE phone='%s' AND building_id=%i"%(phone , buildingId)
     cursor.execute(cmd)
-    
-    if len(cursor.fetchall()) == 1:
-        result = {"result":True}
+
+    all = cursor.fetchall()
+
+    if len(all) == 1:
+        owner_name , phone , unit_number , tag , building_id = all[0]
+        result = {"result":True , "unitNumber":unit_number}
     else:
-        result = {"result":False}
+        result = {"result":False , "buildingId":-1 , "unitNumber":-1}
 
     cursor.close()
     db.close()
