@@ -199,13 +199,6 @@ def unit_delete():
     db.close()    
     return jsonify(response)
 
-
-
-
-
-
-
-
 @app.route("/unit/info" , methods=["get"])
 def unit_info():
     building_id = int(request.args.get("building_id"))
@@ -242,25 +235,6 @@ def unit_info():
                 }
 
     return jsonify(response)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #notification ----------------------------------
 @app.route("/notification/add" , methods=['GET'])
