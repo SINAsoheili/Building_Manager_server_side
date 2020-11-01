@@ -44,6 +44,32 @@ def manager_register():
         return result
 
 
+@app.route("/manager/signIn" , methods=["GET"])
+def manager_signIn():
+    passwd = request.args.get("password")
+    phone  = request.args.get("phone")
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+
+    if db.is_connected == False:
+        abort(500)
+
+    cursor = db.cursor()
+    cmd = "SELECT * FROM manager WHERE phone='%s' AND passwd='%s' "%(phone , passwd)
+    cursor.execute(cmd)
+    
+    items = cursor.fetchall()
+
+    if len(items) == 0 :
+        result = {"status":True , "manager_id":-1} 
+    elif len(items) > 0 :
+        id = items[0][0]
+        result = {"status":True , "manager_id":id} 
+    else:
+        result = {"status":False , "manager_id":-1} 
+        
+    return result
+
 
 #Building---------------------------------------
 @app.route("/building/register" , methods=["get"])
