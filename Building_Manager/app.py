@@ -13,63 +13,37 @@ def manager_register():
 
     db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
 
-    if db.is_connected == False:
-        abort(500)
+    if not db.is_connected():
+        db.close()
+        return {"query_execute_status":False , "manager_id":-1}
 
     cursor = db.cursor()
-    cmd = "INSERT INTO `manager` (passwd , phone) VALUES ('%s'  , '%s')"%(passwd , phone)
+    cmd = "SELECT * FROM manager WHERE phone='%s' AND passwd='%s'"%(phone , passwd)
     cursor.execute(cmd)
-    db.commit()
 
-    if cursor.rowcount > 0 :
-        cmd = "SELECT * FROM `manager` WHERE phone='%s'"%phone
-        cursor.execute(cmd)
-
-        result = cursor.fetchall()
-        cursor.close()
-        db.close()
-        if len(result) == 0 :
-            result = {"status":True , "manager_id":-1} 
-            cursor.close()
-            return result   
-        else:
-            row = result[0]
-            id = row[0]
-            result = {"status":True , "manager_id":id} 
-            return result
-    else :
-        cursor.close()
-        db.close()
-        result = {"status":False , "manager_id":-1}
-        return result
-
-
-@app.route("/manager/signIn" , methods=["GET"])
-def manager_signIn():
-    passwd = request.args.get("password")
-    phone  = request.args.get("phone")
-
-    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
-
-    if db.is_connected == False:
-        abort(500)
-
-    cursor = db.cursor()
-    cmd = "SELECT * FROM manager WHERE phone='%s' AND passwd='%s' "%(phone , passwd)
-    cursor.execute(cmd)
-    
     items = cursor.fetchall()
+    
+    if len(items) > 0 :
+        result = {"query_execute_status":True , "manager_id":items[0][0]} 
+        cursor.close()
+        db.close
+        return result 
 
-    if len(items) == 0 :
-        result = {"status":True , "manager_id":-1} 
-    elif len(items) > 0 :
-        id = items[0][0]
-        result = {"status":True , "manager_id":id} 
     else:
-        result = {"status":False , "manager_id":-1} 
-        
-    return result
+        cmd = "INSERT INTO `manager` (passwd , phone) VALUES ('%s'  , '%s')"%(passwd , phone)
+        cursor.execute(cmd)
+        db.commit()
 
+        cmd = "SELECT * FROM manager WHERE phone='%s' AND passwd='%s'"%(phone , passwd)
+        cursor.execute(cmd)
+        items = cursor.fetchall()
+        cursor.close()
+        db.close()
+
+        if len(items) > 0:
+            return {"query_execute_status":True , "manager_id":items[0][0]} 
+        else :
+            return {"query_execute_status":True , "manager_id":-1} 
 
 #Building---------------------------------------
 @app.route("/building/register" , methods=["get"])
