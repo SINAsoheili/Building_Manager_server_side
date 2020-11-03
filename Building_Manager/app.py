@@ -489,9 +489,14 @@ def charge_add():
     db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
     if db.is_connected == False:
         abort(500)
-    
+
     cursor = db.cursor()
-    cmd = "INSERT INTO `charge` (amount , status , issue_date , pay_date , manager_id , building_id , unit_number) VALUES (%f , %i , '%s' , '%s' , %i , %i , %i)"%(amount , status , issue_date , pay_date , manager_id , building_id , unit_number)
+
+    if pay_date == None :
+        cmd = "INSERT INTO `charge` (amount , status , issue_date , manager_id , building_id , unit_number) VALUES (%f , %i , '%s' , %i , %i , %i)"%(amount , status , issue_date , manager_id , building_id , unit_number)
+    else :
+        cmd = "INSERT INTO `charge` (amount , status , issue_date , pay_date , manager_id , building_id , unit_number) VALUES (%f , %i , '%s' , '%s' , %i , %i , %i)"%(amount , status , issue_date , pay_date , manager_id , building_id , unit_number)
+
     cursor.execute(cmd)
     db.commit()
 
