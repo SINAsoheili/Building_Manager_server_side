@@ -116,6 +116,35 @@ def building_list():
     return jsonify(list_response)
 
 
+@app.route("/building/info" , methods=["get"])
+def building_info():
+    building_id = int(request.args.get("building_id"))
+
+    db = connector.connect(host=HOST , user=USER , passwd=PASSWD , database=DB_NAME , auth_plugin=AUTH_PLUGIN)
+    if db.is_connected == False:
+        abort(500)
+
+    cursor = db.cursor()
+    cmd = "SELECT * FROM `building` WHERE id=%i"%building_id
+    cursor.execute(cmd)
+    result = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    list_response = []
+    for obj in result:
+        id , name , cash , address , unit_count , manager_id = obj
+        response = {
+            "id":id, 
+            "name":name,
+            "cash":cash, 
+            "address":address, 
+            "unit_count":unit_count
+        }
+
+        list_response.append(response)
+
+    return jsonify(list_response)
 
 #Unit-------------------------------------------
 @app.route("/unit/add" , methods=['GET'])
