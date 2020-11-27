@@ -49,7 +49,6 @@ def manager_register():
 @app.route("/building/register" , methods=["get"])
 def building_register():
     name = request.args.get("name")
-    cash = float(request.args.get("cash"))
     address = request.args.get("address")
     unit_count = int(request.args.get("unit_count"))
     manager_id = int(request.args.get("manager_id"))
@@ -59,7 +58,7 @@ def building_register():
         abort(500)
 
     cursor = db.cursor()
-    cmd = "INSERT INTO `building` (name , cash , address , unit_count , manager_id) VALUES ('%s' , %f , '%s' , %i , %i)"%(name , cash , address , unit_count , manager_id)
+    cmd = "INSERT INTO `building` (name, address , unit_count , manager_id) VALUES ('%s' , '%s' , %i , %i)"%(name , address , unit_count , manager_id)
     cursor.execute(cmd)
     db.commit()
 
@@ -101,11 +100,10 @@ def building_list():
 
     list_response = []
     for obj in result:
-        id , name , cash , address , unit_count , manager_id = obj
+        id , name , address , unit_count , manager_id = obj
         response = {
             "id": id , 
             "name": name ,
-            "cash": cash , 
             "address": address , 
             "unit_count": unit_count , 
             "manager_id": manager_id
@@ -133,11 +131,10 @@ def building_info():
 
     list_response = []
     for obj in result:
-        id , name , cash , address , unit_count , manager_id = obj
+        id , name , address , unit_count , manager_id = obj
         response = {
             "id":id, 
             "name":name,
-            "cash":cash, 
             "address":address, 
             "unit_count":unit_count
         }
