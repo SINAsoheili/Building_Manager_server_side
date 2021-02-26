@@ -30,21 +30,20 @@ def manager_register():
         return result 
 
     else:
-        cmd = "INSERT INTO `manager` (passwd , phone) VALUES ('%s'  , '%s')"%(passwd , phone)
-        cursor.execute(cmd)
-        db.commit()
+        try:
+            cmd = "INSERT INTO `manager` (passwd , phone) VALUES ('%s'  , '%s')"%(passwd , phone)
+            cursor.execute(cmd)
+            db.commit()
 
-        cmd = "SELECT * FROM manager WHERE phone='%s' AND passwd='%s'"%(phone , passwd)
-        cursor.execute(cmd)
-        items = cursor.fetchall()
-        cursor.close()
-        db.close()
-
-        if len(items) > 0:
+            cmd = "SELECT * FROM manager WHERE phone='%s' AND passwd='%s'"%(phone , passwd)
+            cursor.execute(cmd)
+            items = cursor.fetchall()
+            cursor.close()
+            db.close()
             return {"query_execute_status":True , "manager_id":items[0][0]} 
-        else :
+        except connector.errors.IntegrityError as e : #user exists and password is wrong
             return {"query_execute_status":True , "manager_id":-1} 
-
+            
 #Building---------------------------------------
 @app.route("/building/register" , methods=["get"])
 def building_register():
